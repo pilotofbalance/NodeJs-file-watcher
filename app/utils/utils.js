@@ -1,13 +1,19 @@
 const routes = require('../routes');
 const url = require('url');
 const token = require('./token');
+const fs = require('fs');
 
-const sendResponse = (resp, data, statusCode, headers) => {
+const sendResponse = (resp, data, statusCode, headers, type) => {
   resp.writeHead(statusCode, headers);
   resp.end(JSON.stringify(data));
 };
-
 exports.sendResponse = sendResponse;
+
+exports.loadFile = (resp, path, statusCode, headers) => {
+  const fileStream = fs.createReadStream(path,'UTF-8');
+  resp.writeHead(statusCode, headers);
+  fileStream.pipe(resp);
+}
 
 exports.collectData = (req, callback) => {
   let data = '';
@@ -50,9 +56,9 @@ exports.routing = (req, resp) => {
     }
     if(currentRoute === null || (currentRoute && currentRoute.method !== req.method)){
        sendResponse(resp, "No such service found", 404);
-    }
-    if(currentRoute.auth && !token.verify(req.headers.authorization)){
+    }else if(currentRoute && currentRoute.auth && !token.verify(req.headers.authorization)){
   	   sendResponse(resp, "The access token provided is expired", 401);
     }
+    
     return {match:currentRoute,param:param};
 };

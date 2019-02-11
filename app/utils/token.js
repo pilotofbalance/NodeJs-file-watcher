@@ -30,4 +30,5 @@ exports.init = ()=> {
     return token;
 };
 
+exports.set = set;
 

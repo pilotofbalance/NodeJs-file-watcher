@@ -1,11 +1,15 @@
 const loginHandler = require('./controllers/login');
+const logoutHandler = require('./controllers/logout');
 const startHandler = require('./controllers/start');
+const stopHandler = require('./controllers/stop');
+const statusHandler = require('./controllers/status');
+const viewHandler = require('./controllers/view');
 
 const routes = [
     {
-        name : 'Mainpage',
+        name : 'Mainview',
         auth : false,
-        controller : 'pageHandler', 
+        controller : viewHandler, 
         pattern: '/',
         method: 'GET'
     },
@@ -19,7 +23,7 @@ const routes = [
     {
         name : 'Logout',
         auth : true,
-        controller : 'logoutAction', 
+        controller : logoutHandler, 
         pattern: '/logout',
         method: 'POST'
     },
@@ -33,14 +37,14 @@ const routes = [
     {
         name : 'Status',
         auth : true,
-        controller : 'statusAction', 
+        controller : statusHandler, 
         pattern: '/status/{event}',
         method: 'GET'
     },
     {
         name : 'Stop',
         auth : true,
-        controller : 'stopAction', 
+        controller : stopHandler, 
         pattern: '/stop',
         method: 'POST'
     }

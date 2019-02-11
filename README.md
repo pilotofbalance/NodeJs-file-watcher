@@ -10,7 +10,8 @@ To configure user authentication pls change config.json file:
 {
   "password" : {YOUR_PASSWORD},
   "username" : {YOUR_USERNAME},
-  "expTime" : {SESSION_EXPIRATION_TIME} //in milliseconds
+  "expTime" : {SESSION_EXPIRATION_TIME} //in milliseconds,
+  "port" : {WEB_SERVER_PORT}
 }
 ```
 
