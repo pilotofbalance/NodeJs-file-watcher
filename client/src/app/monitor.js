@@ -30,14 +30,12 @@ class MonitorPage extends Component{
     	       //call to '/status/{event}' service recursivly till firing '/stop/ service'
     		   const status = setInterval(()=>this.status(),1000);
                scope.setState({action:'visible',alert:resp.data.msg,alertClass:'container alert-success',status:status});
-               setTimeout(()=>scope.setState({alert:''}),3000);
 	    	}
 	    	const failure = (error, scope) => {
 	    	   //handle non existing path error
 	    	   if(error.response.status === 404){
 	    	   	    const msg = error.response.data.msg;
 	    	   		scope.setState({alert:msg,alertClass:'container alert-error'});
-	    	   		setTimeout(()=>scope.setState({alert:''}),3000);
 	    	   }else{
 	                this.sessionExpired();
 	    	   }
@@ -69,7 +67,6 @@ class MonitorPage extends Component{
 		const success = (resp,scope) => {
 			   clearInterval(this.state.status);
                scope.setState({log:'',status:'',action:'hidden',alert:resp.data.msg,alertClass:'container alert-success'});
-               setTimeout(()=>scope.setState({alert:''}),3000);
 	    }
 	    const failure = (error) => {
 	           this.sessionExpired();
@@ -113,7 +110,7 @@ class MonitorPage extends Component{
 	render(){
 		let alert;
 		if(this.state.alert !== ''){
-			alert = <Alert alert={this.state.alert} alertClass={this.state.alertClass}/>;
+			alert = <Alert alert={this.state.alert} alertClass={this.state.alertClass} onComplete={{scope:this}}/>;
 		}
 		const hidden = this.state.action === 'hidden' ? true : false;
 		return (
@@ -122,7 +119,7 @@ class MonitorPage extends Component{
 				    <Head title={'Folder Monitor Form'}/>
 					<div className="container">
 					    <Spinner action={this.state.action}/>
-					    <label for="folder"><b>Select Folder</b></label>
+					    <label htmlFor="folder"><b>Select Folder</b></label>
 					    <input id="folder" name="folder" type="text" placeholder="Example C:/someFolder/etc" onChange={(e)=>{this.handleChange(e);this.isFormValid()}} value={this.state.folder} className={!this.state.folVal?'notValid':''}/>
 					    <button type="button" id="start" onClick={this.start} className="success" disabled={!hidden}>Start</button>
 					    <button type="button" id="stop" onClick={this.stop} className="danger" disabled={hidden}>Stop</button>

@@ -8,6 +8,7 @@ class MainPage extends Component{
 		this.switchView = this.switchView.bind(this);
 	}
 	
+	//basic routing between login and monitor pages
 	switchView(view){
         this.setState({route:view});
 	}

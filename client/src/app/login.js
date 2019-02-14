@@ -30,7 +30,6 @@ class LoginPage extends Component{
 	        }
 	        const failure = (error,scope) => {
 	           scope.setState({alert:error.response.data.msg});
-	           setTimeout(()=>scope.setState({alert:''}),3000);
 	        }
 			service.doAction('/login',"POST",this.state,this,success,failure);
 		}
@@ -58,17 +57,17 @@ class LoginPage extends Component{
 	render(){
 		let alert;
 		if(this.state.alert !== ""){
-			alert = <Alert alert={this.state.alert} alertClass={'container alert-error'}/>;
+			alert = <Alert alert={this.state.alert} alertClass={'container alert-error'} onComplete={{scope:this}}/>;
 		}
 		return (
 			<div>
 				<form>
 				    <Head title={'Login Form'}/>
 					<div className="container">
-					    <label for="uname"><b>Username</b></label>
+					    <label htmlFor="uname"><b>Username</b></label>
 					    <input placeholder="Enter Username" onChange={(e)=>{this.handleChange(e);this.isFormValid()}} value={this.state.username} className={!this.state.usrVal?'notValid':''} id="uname" name="username" type="text" ref={this.textInput}/>
 
-					    <label for="psw"><b>Password</b></label>
+					    <label htmlFor="psw"><b>Password</b></label>
 					    <input placeholder="Enter Password" onChange={(e)=>{this.handleChange(e);this.isFormValid()}}  value={this.state.password} className={!this.state.pswVal?'notValid':''} id="psw" name="password" type="password" />
 					        
 					    <button className="primary" type="submit" id="submit" onClick={this.login}>Login</button>
