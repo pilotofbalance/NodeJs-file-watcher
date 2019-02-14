@@ -2,5 +2,6 @@
 	"username": "User",
 	"password": "User",
 	"expTime" : 1200000,
-	"port" : 8090
+	"port" : 8090,
+	"testsPath" : "C:/MyFiles"
 }

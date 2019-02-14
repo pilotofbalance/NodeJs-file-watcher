@@ -12,3 +12,8 @@ const server = http.createServer((req, resp)=>{
   }
 });
 server.listen(config.port);
+
+//stopping http server
+exports.stop =()=>{
+	server.close();
+}
