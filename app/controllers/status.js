@@ -1,8 +1,13 @@
 const utils = require('../utils/utils');
 const token = require('../utils/token');
+const watcher = require('../utils/watcher');
 
+/*get last monitored events
+  params - path params 
+*/
 const handler = (req, resp, params) => {
-  utils.sendResponse(resp, params, 200, {'Content-Type': 'application/json'});
+  const logs = watcher.events();
+  utils.sendResponse(resp, null, 200, logs);
 }
 
 module.exports = handler;

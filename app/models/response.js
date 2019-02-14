@@ -1,7 +1,7 @@
 class Response {
-	constructor(msg,code,data){
-		this.msg = msg;
+	constructor(code,msg,data){
 		this.code = code;
+		this.msg = msg;
 		this.data = data;
 	}
 }

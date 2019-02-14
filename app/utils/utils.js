@@ -2,19 +2,22 @@ const routes = require('../routes');
 const url = require('url');
 const token = require('./token');
 const fs = require('fs');
-
-const sendResponse = (resp, data, statusCode, headers, type) => {
-  resp.writeHead(statusCode, headers);
-  resp.end(JSON.stringify(data));
+const Response = require('../models/response');
+ 
+//json response handler
+exports.sendResponse = (resp, msg, statusCode, data) => {
+  resp.writeHead(statusCode, {'Content-Type': 'application/json'});
+  resp.end(JSON.stringify(new Response(statusCode,msg,data)));
 };
-exports.sendResponse = sendResponse;
 
+//load file from system
 exports.loadFile = (resp, path, statusCode, headers) => {
   const fileStream = fs.createReadStream(path,'UTF-8');
   resp.writeHead(statusCode, headers);
   fileStream.pipe(resp);
 }
 
+//in case of request has data in body
 exports.collectData = (req, callback) => {
   let data = '';
   req.on('data', (chunk) => {
@@ -25,14 +28,17 @@ exports.collectData = (req, callback) => {
   });
 };
 
-exports.routing = (req, resp) => {
-	const {pathname} = url.parse(req.url);
-    let urlParts = pathname.split("/");
+//request URL parser, helps route to specific controlle, TODO: rewrite..
+exports.routing = (req, resp, isStatic) => {
     let param = [];
     let currentRoute = null;
-    
+    const {pathname} = url.parse(req.url);
+    let urlParts = pathname.split("/");
+    const route =  {match:currentRoute,param:param};
+
+    if(isStatic) return route;
     for(let index = 0,total = routes.length;index<total;index++){
-    	let match = true;
+    	  let match = true;
         const patternSplit = routes[index].pattern.split("/");
         if (urlParts.length === patternSplit.length) {
             for (let i = 0, l = urlParts.length;i<l;i++) {
@@ -55,10 +61,11 @@ exports.routing = (req, resp) => {
         }
     }
     if(currentRoute === null || (currentRoute && currentRoute.method !== req.method)){
-       sendResponse(resp, "No such service found", 404);
+       this.sendResponse(resp, 'No such service found', 404);
     }else if(currentRoute && currentRoute.auth && !token.verify(req.headers.authorization)){
-  	   sendResponse(resp, "The access token provided is expired", 401);
+       this.sendResponse(resp, 'The access token provided is expired', 401);
     }
-    
-    return {match:currentRoute,param:param};
+    route.match = currentRoute;
+    route.param = param;
+    return route;
 };

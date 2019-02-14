@@ -5,6 +5,7 @@ const stopHandler = require('./controllers/stop');
 const statusHandler = require('./controllers/status');
 const viewHandler = require('./controllers/view');
 
+//request URL - controller mapper and auth config
 const routes = [
     {
         name : 'Mainview',

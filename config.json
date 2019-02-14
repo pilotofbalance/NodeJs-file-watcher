@@ -1,6 +1,6 @@
 {
-	"username": "Clerk",
-	"password": "a",
-	"expTime" : 300000,
+	"username": "User",
+	"password": "User",
+	"expTime" : 1200000,
 	"port" : 8090
 }
