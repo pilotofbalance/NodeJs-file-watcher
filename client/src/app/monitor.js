@@ -3,6 +3,7 @@ import Login from './login';
 import Spinner from './components/spinner';
 import Head from './components/head';
 import TextArea from './components/textarea';
+import Alert from './components/alert';
 import PropTypes from 'prop-types';
 import service from './services/service';
 
@@ -22,14 +23,17 @@ class MonitorPage extends Component{
     	this.setState({ [e.target.name]: e.target.value });
     }
     
+    //call to '/start' service and handle errors
     start(){
     	if(this.isFormValid()){
     		const success = (resp,scope) => {
+    	       //call to '/status/{event}' service recursivly till firing '/stop/ service'
     		   const status = setInterval(()=>this.status(),1000);
                scope.setState({action:'visible',alert:resp.data.msg,alertClass:'container alert-success',status:status});
                setTimeout(()=>scope.setState({alert:''}),3000);
 	    	}
 	    	const failure = (error, scope) => {
+	    	   //handle non existing path error
 	    	   if(error.response.status === 404){
 	    	   	    const msg = error.response.data.msg;
 	    	   		scope.setState({alert:msg,alertClass:'container alert-error'});
@@ -42,6 +46,7 @@ class MonitorPage extends Component{
     	}
 	}
 
+    //call to '/status/{event}' service and update log
 	status(){
 		const success = (resp,scope) => {
 			   let text = '';
@@ -59,6 +64,7 @@ class MonitorPage extends Component{
 		service.doAction('/status/all','GET',{},this,success,failure);
 	}
 
+    //call to '/stop' service and kill recursive call to 'status/{event}' service
 	stop(){
 		const success = (resp,scope) => {
 			   clearInterval(this.state.status);
@@ -71,6 +77,7 @@ class MonitorPage extends Component{
 		service.doAction('/stop','POST',{},this,success,failure);
 	}
 
+    //call to '/logout' service and erase token from cookies
 	logout(){
 		const success = (resp,scope) => {
                document.cookie = `_auth_cookie=${undefined}`;
@@ -82,11 +89,13 @@ class MonitorPage extends Component{
 		service.doAction('/logout','POST',{},this,success,failure);
 	}
 
+    //handle token expiration error
 	sessionExpired(){
 		alert("Your session has been expired please log in again.");
 	    window.location.href ='/';
 	}
     
+    //some basic form validation
     isFormValid(){
 		let folVal = true;
 		if(this.state.folder === ''){
@@ -95,7 +104,8 @@ class MonitorPage extends Component{
 		this.setState({folVal:folVal});
 		return folVal;
 	}
-
+    
+    //get rid of empty lines from textarea
 	textFormat(text,log){
 		return text === '' ? log : `${text}\n${log}`;
 	}
@@ -103,7 +113,7 @@ class MonitorPage extends Component{
 	render(){
 		let alert;
 		if(this.state.alert !== ''){
-			alert = <div className={this.state.alertClass}>{this.state.alert}</div>;
+			alert = <Alert alert={this.state.alert} alertClass={this.state.alertClass}/>;
 		}
 		const hidden = this.state.action === 'hidden' ? true : false;
 		return (

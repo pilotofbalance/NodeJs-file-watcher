@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Head extends Component{
-	
+
 	render(){
 		return (
 			<div className="container head">
@@ -14,5 +14,5 @@ class Head extends Component{
 export default Head;
 
 Head.propTypes = {
-    title: PropTypes.string
+    title: PropTypes.string.isRequired
 };

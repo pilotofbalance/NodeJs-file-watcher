@@ -3,6 +3,7 @@ import Monitor from './monitor';
 import PropTypes from 'prop-types';
 import service from './services/service';
 import Head from './components/head';
+import Alert from './components/alert';
 
 class LoginPage extends Component{
 	constructor(props) {
@@ -14,6 +15,7 @@ class LoginPage extends Component{
 		this.isFormValid = this.isFormValid.bind(this);
 	}
     
+    //update state with event value
     handleChange(e) {
     	this.setState({ [e.target.name]: e.target.value });
     }
@@ -56,7 +58,7 @@ class LoginPage extends Component{
 	render(){
 		let alert;
 		if(this.state.alert !== ""){
-			alert = <div class="container alert-error">{this.state.alert}</div>;
+			alert = <Alert alert={this.state.alert} alertClass={'container alert-error'}/>;
 		}
 		return (
 			<div>
