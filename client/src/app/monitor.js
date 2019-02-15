@@ -10,8 +10,7 @@ import service from './services/service';
 class MonitorPage extends Component{
 	constructor(props) {
 		super(props);
-		this.state = {action:'hidden',alert:'',alertClass:'container',folder:'',log:'',folVal:false,status:''};
-		this.textLog = React.createRef();
+		this.state = {action:'hidden',alert:'',alertClass:'container',folder:'',log:[],folVal:false,status:''};
 		this.handleChange = this.handleChange.bind(this);
 		this.start = this.start.bind(this);
 		this.status = this.status.bind(this);
@@ -47,14 +46,9 @@ class MonitorPage extends Component{
     //call to '/status/{event}' service and update log
 	status(){
 		const success = (resp,scope) => {
-			   let text = '';
-			   const res = resp.data
-			   if(res && res.data && res.data.length){
-			       res.data.forEach((log)=>{text = this.textFormat(text,`${log.date} - ${log.event}`)});
-			       scope.setState((prevState)=>({log:this.textFormat(prevState.log,text)}));
-			       this.textLog.current.scrollTop = this.textLog.current.scrollHeight;
+			   if(resp && resp.data){
+			   		scope.setState({log:resp.data.data});
 			   }
-               
 	    }
 	    const failure = (error) => {
 	           this.sessionExpired();
@@ -66,7 +60,7 @@ class MonitorPage extends Component{
 	stop(){
 		const success = (resp,scope) => {
 			   clearInterval(this.state.status);
-               scope.setState({log:'',status:'',action:'hidden',alert:resp.data.msg,alertClass:'container alert-success'});
+               scope.setState({log:[],status:'',action:'hidden',alert:resp.data.msg,alertClass:'container alert-success'});
 	    }
 	    const failure = (error) => {
 	           this.sessionExpired();
@@ -101,11 +95,6 @@ class MonitorPage extends Component{
 		this.setState({folVal:folVal});
 		return folVal;
 	}
-    
-    //get rid of empty lines from textarea
-	textFormat(text,log){
-		return text === '' ? log : `${text}\n${log}`;
-	}
 
 	render(){
 		let alert;
@@ -126,7 +115,7 @@ class MonitorPage extends Component{
 					    <button type="button" id="logout" onClick={this.logout} className="primary right">Logout</button>
 				    </div>
 				    {alert}
-				    <TextArea log={this.state.log} refr={this.textLog}/>
+				    <TextArea log={this.state.log} action={this.state.action}/>
 				</form>
 			</div>
 			);

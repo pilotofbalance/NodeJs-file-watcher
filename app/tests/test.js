@@ -71,6 +71,17 @@ async function test(){
 		});
 	});
 
+	//testing /start service with not existing folder path
+	const wrongPath = "C:/Not/Exist";
+	await util.request('/start','POST',{folder:wrongPath},token).then((result)=>{
+		util.describe('Test /start service with not existing folder path', () => {
+		  util.it('should return message that folder not found with invoc status 404', () => {
+		    util.expect(result.msg).toEqual(`No such directory, stat ${wrongPath}`);
+		    util.expect(result.code).toEqual(404);
+		  });
+		});
+	});
+
     //testing /status/{event} service
 	await util.request('/status/all','GET',{},token).then((result)=>{
 		util.describe('Test /status service', () => {
